@@ -10,8 +10,8 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Field, FieldGroup, FieldSeparator } from "../ui/field";
-import PersonalInfoForm from "./personalInfoForm";
-
+import Goals from "./goals";
+import PersonalInfo from "./personalInfo";
 // import * as z from "zod";
 // import { toast } from "sonner";
 // import { useForm } from "@tanstack/react-form";
@@ -184,8 +184,9 @@ const ClientIntakeForm = () => {
       <CardContent>
         <form>
           <FieldGroup>
-            <PersonalInfoForm />
+            <PersonalInfo />
             <FieldSeparator />
+            <Goals />
           </FieldGroup>
         </form>
       </CardContent>

@@ -1,40 +1,40 @@
 "use client";
 
-import { CalendarDays, User } from "lucide-react";
+import { CalendarDays, UserIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import {
-    Field,
-    FieldGroup,
-    FieldLabel,
-    FieldLegend,
-    FieldSet,
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
 } from "../ui/field";
 import { Input } from "../ui/input";
 import {
-    InputGroup,
-    InputGroupAddon,
-    InputGroupInput,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
 } from "../ui/input-group";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "../ui/select";
 
-const PersonalInfoForm = () => {
+const PersonalInfo = () => {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
 
   return (
     <FieldSet>
       <FieldLegend className="flex gap-2 items-center mb-4">
-        <User size={24} />
+        <UserIcon size={24} />
         <span className="text-xl">Personal Info</span>
       </FieldLegend>
       <FieldGroup>
@@ -125,4 +125,4 @@ const PersonalInfoForm = () => {
   );
 };
 
-export default PersonalInfoForm;
+export default PersonalInfo;
