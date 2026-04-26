@@ -26,10 +26,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { useMaskInput } from "use-mask-input";
 
 const PersonalInfo = () => {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
+
+  const phoneMask = useMaskInput({
+    mask: `(999) 999-9999`
+  });
 
   return (
     <FieldSet>
@@ -117,7 +122,7 @@ const PersonalInfo = () => {
           </Field>
           <Field>
             <FieldLabel>Phone</FieldLabel>
-            <Input type="tel" placeholder="(000) 000-0000" />
+            <Input type="tel" ref={phoneMask} placeholder="(000) 000-0000" />
           </Field>
         </div>
       </FieldGroup>
