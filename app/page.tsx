@@ -3,7 +3,7 @@ import React from 'react'
 
 const page = () => {
   return (
-    <main className='h-screen flex justify-center items-center'>
+    <main className='min-h-screen flex justify-center m-8 md:m-24'>
       <ClientIntakeForm />
     </main>
   )

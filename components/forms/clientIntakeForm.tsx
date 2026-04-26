@@ -12,6 +12,7 @@ import {
 import { Field, FieldGroup, FieldSeparator } from "../ui/field";
 import Goals from "./goals";
 import PersonalInfo from "./personalInfo";
+import TrainingHistory from "./trainingHistory";
 // import * as z from "zod";
 // import { toast } from "sonner";
 // import { useForm } from "@tanstack/react-form";
@@ -187,11 +188,13 @@ const ClientIntakeForm = () => {
             <PersonalInfo />
             <FieldSeparator />
             <Goals />
+            <FieldSeparator />
+            <TrainingHistory />
           </FieldGroup>
         </form>
       </CardContent>
 
-      <CardFooter className="pt-4">
+      <CardFooter className="pt-6">
         <Field orientation="horizontal">
           <Button variant="secondary">Reset</Button>
           <Button>Send Form</Button>
