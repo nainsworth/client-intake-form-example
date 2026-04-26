@@ -1,6 +1,7 @@
 "use client";
 
 import { DumbbellIcon, XIcon } from "lucide-react";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import {
   Field,
@@ -15,8 +16,6 @@ import {
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-  InputGroupText,
-  InputGroupTextarea,
 } from "../ui/input-group";
 import { Label } from "../ui/label";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
@@ -31,6 +30,14 @@ import {
 import { Textarea } from "../ui/textarea";
 
 const TrainingHistory = () => {
+  const [results, setResults] = useState<{ result: string }[]>([]);
+
+  const [radio, setRadio] = useState<boolean>(false);
+
+  const handleRadioChange = () => {
+    setRadio(!radio);
+  };
+
   return (
     <FieldSet>
       <FieldLegend className="flex gap-2 items-center mb-4">
@@ -118,7 +125,11 @@ const TrainingHistory = () => {
         <Field orientation={"horizontal"}>
           <Field>
             <FieldLabel>Previous competitions?</FieldLabel>
-            <RadioGroup defaultValue="no" className="flex gap-4 pl-2">
+            <RadioGroup
+              defaultValue="no"
+              onValueChange={handleRadioChange}
+              className="flex gap-4 pl-2"
+            >
               <div className="flex item-center gap-2">
                 <RadioGroupItem value="yes" id="yes" />
                 <Label htmlFor="yes">Yes</Label>
@@ -129,19 +140,35 @@ const TrainingHistory = () => {
               </div>
             </RadioGroup>
           </Field>
-          <Button>Add Results</Button>
+          {radio && (
+            <Button
+              type="button"
+              onClick={() => setResults((prev) => [...prev, { result: "" }])}
+            >
+              Add Results
+            </Button>
+          )}
         </Field>
-        <Field>
-          <InputGroup>
-            <InputGroupTextarea />
-            <InputGroupAddon align="block-start">
-              <InputGroupText>Competition | Results</InputGroupText>
-              <InputGroupButton variant="ghost" className="ml-auto">
-                <XIcon />
-              </InputGroupButton>
-            </InputGroupAddon>
-          </InputGroup>
-        </Field>
+        {/* Competition Result Fields */}
+        {results.map((result, index) => (
+          <Field key={index}>
+            <InputGroup>
+              <InputGroupInput placeholder="Competition Name | Results" />
+              <InputGroupAddon align="inline-end">
+                <InputGroupButton
+                  variant="ghost"
+                  className="ml-auto"
+                  type="button"
+                  onClick={() =>
+                    setResults((prev) => prev.filter((_, i) => i !== index))
+                  }
+                >
+                  <XIcon />
+                </InputGroupButton>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+        ))}
 
         <Field>
           <FieldLabel>Other Athletic Background?</FieldLabel>

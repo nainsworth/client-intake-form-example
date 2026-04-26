@@ -20,6 +20,11 @@ import { Textarea } from "../ui/textarea";
 const Goals = () => {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
+  const [goalRadio, setGoalRadio] = useState<boolean>(false);
+
+  const handleRadioChange = () => {
+    setGoalRadio(!goalRadio);
+  };
 
   return (
     <FieldSet>
@@ -41,7 +46,11 @@ const Goals = () => {
         <div className="flex gap-6 items-center">
           <Field>
             <FieldLabel>Are you competing soon?</FieldLabel>
-            <RadioGroup defaultValue="no" className="flex gap-4 pl-2">
+            <RadioGroup
+              className="flex gap-4 pl-2"
+              onValueChange={handleRadioChange}
+              defaultValue="no"
+            >
               <div className="flex item-center gap-2">
                 <RadioGroupItem value="yes" id="yes" />
                 <Label htmlFor="yes">Yes</Label>
@@ -52,35 +61,37 @@ const Goals = () => {
               </div>
             </RadioGroup>
           </Field>
-          <Field>
-            <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  id="date"
-                  className="justify-between font-normal"
+          {goalRadio && (
+            <Field>
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    id="date"
+                    className="justify-between font-normal"
+                  >
+                    {date ? date.toLocaleDateString() : "When?"}
+                    <CalendarDays />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-auto overflow-hidden p-2"
+                  align="start"
                 >
-                  {date ? date.toLocaleDateString() : "When?"}
-                  <CalendarDays />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-auto overflow-hidden p-2"
-                align="start"
-              >
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  defaultMonth={date}
-                  captionLayout="dropdown"
-                  onSelect={(date) => {
-                    setDate(date);
-                    setOpen(false);
-                  }}
-                />
-              </PopoverContent>
-            </Popover>
-          </Field>
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    defaultMonth={date}
+                    captionLayout="dropdown"
+                    onSelect={(date) => {
+                      setDate(date);
+                      setOpen(false);
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
+            </Field>
+          )}
         </div>
 
         <Field>
