@@ -1,9 +1,7 @@
 "use client";
 
-import { CalendarDays, DumbbellIcon, XIcon } from "lucide-react";
-import { useState } from "react";
+import { DumbbellIcon, XIcon } from "lucide-react";
 import { Button } from "../ui/button";
-import { Calendar } from "../ui/calendar";
 import {
   Field,
   FieldDescription,
@@ -21,7 +19,6 @@ import {
   InputGroupTextarea,
 } from "../ui/input-group";
 import { Label } from "../ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import {
   Select,
@@ -32,12 +29,8 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
-import { Input } from "../ui/input";
 
 const TrainingHistory = () => {
-  const [open, setOpen] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(undefined);
-
   return (
     <FieldSet>
       <FieldLegend className="flex gap-2 items-center mb-4">
