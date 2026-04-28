@@ -1,5 +1,6 @@
 "use client";
 
+import sendIntakeEmail from "@/app/actions/email";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import {
@@ -90,7 +91,13 @@ const ClientIntakeForm = () => {
         <CardDescription>Test Form</CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
+        <form
+          onSubmit={() => {
+            // e.preventDefault();
+            sendIntakeEmail(formData);
+          }}
+          id="client-intake-form"
+        >
           <FieldGroup>
             <PersonalInfo
               name={formData.name}
@@ -130,8 +137,12 @@ const ClientIntakeForm = () => {
 
       <CardFooter className="pt-6">
         <Field orientation="horizontal">
-          <Button variant="secondary">Reset</Button>
-          <Button>Send Form</Button>
+          <Button variant="secondary" type="button">
+            Reset
+          </Button>
+          <Button type="submit" form="client-intake-form">
+            Send Form
+          </Button>
         </Field>
       </CardFooter>
     </Card>
