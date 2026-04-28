@@ -16,15 +16,29 @@ import { Label } from "../ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Textarea } from "../ui/textarea";
+import type { FormData } from "./clientIntakeForm";
 
-const Goals = () => {
+export type GoalsProps = {
+  shortTermGoal: string;
+  longTermGoal: string;
+  competingSoon: boolean;
+  competitionDate: Date | undefined;
+  whyPowerlifting: string;
+  onFieldChange: (
+    field: keyof FormData,
+    value: FormData[keyof FormData],
+  ) => void;
+};
+
+const Goals = ({
+  shortTermGoal,
+  longTermGoal,
+  competingSoon,
+  competitionDate,
+  whyPowerlifting,
+  onFieldChange,
+}: GoalsProps) => {
   const [open, setOpen] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(undefined);
-  const [goalRadio, setGoalRadio] = useState<boolean>(false);
-
-  const handleRadioChange = () => {
-    setGoalRadio(!goalRadio);
-  };
 
   return (
     <FieldSet>
@@ -33,23 +47,38 @@ const Goals = () => {
         <span className="text-xl">Goals</span>
       </FieldLegend>
       <FieldGroup>
+        {/* Short Term Goal Field */}
         <Field>
           <FieldLabel>Short-Term Goal</FieldLabel>
           <FieldDescription>3-6 Months</FieldDescription>
-          <Textarea placeholder="Enter your goals here." />
+          <Textarea
+            placeholder="Enter your goals here."
+            value={shortTermGoal}
+            onChange={(e) => {
+              onFieldChange("shortTermGoal", e.target.value);
+            }}
+          />
         </Field>
+        {/* Long Term Goal Field */}
         <Field>
           <FieldLabel>Long-Term Goal</FieldLabel>
           <FieldDescription>6-24 Months</FieldDescription>
-          <Textarea placeholder="Enter your goals here." />
+          <Textarea
+            placeholder="Enter your goals here."
+            value={longTermGoal}
+            onChange={(e) => {
+              onFieldChange("longTermGoal", e.target.value);
+            }}
+          />
         </Field>
         <div className="flex gap-6 items-center">
+          {/* Competing Soon Field */}
           <Field>
             <FieldLabel>Are you competing soon?</FieldLabel>
             <RadioGroup
               className="flex gap-4 pl-2"
-              onValueChange={handleRadioChange}
-              defaultValue="no"
+              onValueChange={(e) => onFieldChange("competingSoon", e === "yes")}
+              value={competingSoon ? "yes" : "no"}
             >
               <div className="flex item-center gap-2">
                 <RadioGroupItem value="yes" id="yes" />
@@ -61,7 +90,8 @@ const Goals = () => {
               </div>
             </RadioGroup>
           </Field>
-          {goalRadio && (
+          {/* Competition Date Field */}
+          {competingSoon && (
             <Field>
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
@@ -70,7 +100,9 @@ const Goals = () => {
                     id="date"
                     className="justify-between font-normal"
                   >
-                    {date ? date.toLocaleDateString() : "When?"}
+                    {competitionDate
+                      ? competitionDate.toLocaleDateString()
+                      : "When?"}
                     <CalendarDays />
                   </Button>
                 </PopoverTrigger>
@@ -80,11 +112,11 @@ const Goals = () => {
                 >
                   <Calendar
                     mode="single"
-                    selected={date}
-                    defaultMonth={date}
+                    selected={competitionDate}
+                    defaultMonth={competitionDate}
                     captionLayout="dropdown"
                     onSelect={(date) => {
-                      setDate(date);
+                      onFieldChange("competitionDate", date);
                       setOpen(false);
                     }}
                   />
@@ -93,10 +125,14 @@ const Goals = () => {
             </Field>
           )}
         </div>
-
+        {/* Why Powerlifting Field */}
         <Field>
           <FieldLabel>Why are you powerlifting?</FieldLabel>
-          <Textarea placeholder="Enter why here." />
+          <Textarea
+            placeholder="Enter why here."
+            value={whyPowerlifting}
+            onChange={(e) => onFieldChange("whyPowerlifting", e.target.value)}
+          />
         </Field>
       </FieldGroup>
     </FieldSet>

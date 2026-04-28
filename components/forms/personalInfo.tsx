@@ -2,6 +2,7 @@
 
 import { CalendarDays, UserIcon } from "lucide-react";
 import { useState } from "react";
+import { useMaskInput } from "use-mask-input";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import {
@@ -26,28 +27,57 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { useMaskInput } from "use-mask-input";
+import type { FormData } from "./clientIntakeForm";
 
-const PersonalInfo = () => {
+export type PersonalInfoProps = {
+  name: string;
+  dob: Date | undefined;
+  height: string;
+  weight: string;
+  weightUnit: string;
+  email: string;
+  phone: string;
+  onFieldChange: (
+    field: keyof FormData,
+    value: FormData[keyof FormData],
+  ) => void;
+};
+
+const PersonalInfo = ({
+  name,
+  dob,
+  height,
+  weight,
+  weightUnit,
+  email,
+  phone,
+  onFieldChange,
+}: PersonalInfoProps) => {
   const [open, setOpen] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(undefined);
 
   const phoneMask = useMaskInput({
-    mask: `(999) 999-9999`
+    mask: `(999) 999-9999`,
   });
 
   return (
     <FieldSet>
+      {/* Title */}
       <FieldLegend className="flex gap-2 items-center mb-4">
         <UserIcon size={24} />
         <span className="text-xl">Personal Info</span>
       </FieldLegend>
       <FieldGroup>
+        {/* Name Field */}
         <Field>
           <FieldLabel>Name</FieldLabel>
-          <Input type="text" />
+          <Input
+            type="text"
+            value={name}
+            onChange={(e) => onFieldChange("name", e.target.value)}
+          />
         </Field>
         <div className="gap-6 flex flex-col sm:flex-row">
+          {/* DOB Field */}
           <Field>
             <FieldLabel>Date of Birth</FieldLabel>
             <Popover open={open} onOpenChange={setOpen}>
@@ -57,7 +87,7 @@ const PersonalInfo = () => {
                   id="date"
                   className="justify-between font-normal"
                 >
-                  {date ? date.toLocaleDateString() : "Select Date"}
+                  {dob ? dob.toLocaleDateString() : "Select Date"}
                   <CalendarDays />
                 </Button>
               </PopoverTrigger>
@@ -67,20 +97,26 @@ const PersonalInfo = () => {
               >
                 <Calendar
                   mode="single"
-                  selected={date}
-                  defaultMonth={date}
+                  selected={dob}
+                  defaultMonth={dob}
                   captionLayout="dropdown"
                   onSelect={(date) => {
-                    setDate(date);
+                    onFieldChange("dob", date);
                     setOpen(false);
                   }}
                 />
               </PopoverContent>
             </Popover>
           </Field>
+          {/* Height Field */}
           <Field>
             <FieldLabel>Height</FieldLabel>
-            <Select>
+            <Select
+              value={height}
+              onValueChange={(e) => {
+                onFieldChange("height", e);
+              }}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select Height" />
               </SelectTrigger>
@@ -95,12 +131,25 @@ const PersonalInfo = () => {
               </SelectContent>
             </Select>
           </Field>
+          {/* Weight Field */}
           <Field>
             <FieldLabel>Weight</FieldLabel>
             <InputGroup>
-              <InputGroupInput type="number" step="0.1" />
+              <InputGroupInput
+                type="number"
+                step="0.1"
+                value={weight}
+                onChange={(e) => {
+                  onFieldChange("weight", e.target.value);
+                }}
+              />
               <InputGroupAddon align="inline-end">
-                <Select defaultValue="lbs">
+                <Select
+                  value={weightUnit}
+                  onValueChange={(e) => {
+                    onFieldChange("weightUnit", e);
+                  }}
+                >
                   <SelectTrigger className="hover:bg-accent w-full border-none dark:bg-transparent">
                     <SelectValue placeholder="lbs/kg" />
                   </SelectTrigger>
@@ -116,13 +165,30 @@ const PersonalInfo = () => {
           </Field>
         </div>
         <div className="flex flex-col sm:flex-row gap-6">
+          {/* Email Field */}
           <Field>
             <FieldLabel>Email</FieldLabel>
-            <Input type="email" placeholder="example@email.com" />
+            <Input
+              type="email"
+              placeholder="example@email.com"
+              value={email}
+              onChange={(e) => {
+                onFieldChange("email", e.target.value);
+              }}
+            />
           </Field>
+          {/* Phone Field */}
           <Field>
             <FieldLabel>Phone</FieldLabel>
-            <Input type="tel" ref={phoneMask} placeholder="(000) 000-0000" />
+            <Input
+              type="tel"
+              ref={phoneMask}
+              value={phone}
+              onChange={(e) => {
+                onFieldChange("phone", e.target.value);
+              }}
+              placeholder="(000) 000-0000"
+            />
           </Field>
         </div>
       </FieldGroup>

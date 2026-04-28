@@ -1,7 +1,6 @@
 "use client";
 
 import { DumbbellIcon, XIcon } from "lucide-react";
-import { useState } from "react";
 import { Button } from "../ui/button";
 import {
   Field,
@@ -28,16 +27,36 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
+import type { FormData } from "./clientIntakeForm";
 
-const TrainingHistory = () => {
-  const [results, setResults] = useState<{ result: string }[]>([]);
+export type TrainingHistoryProps = {
+  yearsLifting: string;
+  bestSquat: string;
+  bestBench: string;
+  bestDeadlift: string;
+  liftUnit: string;
+  hasCompeted: boolean;
+  results: { result: string }[];
+  athleticBackground: string;
+  trainingSchedule: string;
+  onFieldChange: (
+    field: keyof FormData,
+    value: FormData[keyof FormData],
+  ) => void;
+};
 
-  const [radio, setRadio] = useState<boolean>(false);
-
-  const handleRadioChange = () => {
-    setRadio(!radio);
-  };
-
+const TrainingHistory = ({
+  yearsLifting,
+  bestSquat,
+  bestBench,
+  bestDeadlift,
+  liftUnit,
+  hasCompeted,
+  results,
+  athleticBackground,
+  trainingSchedule,
+  onFieldChange,
+}: TrainingHistoryProps) => {
   return (
     <FieldSet>
       <FieldLegend className="flex gap-2 items-center mb-4">
@@ -45,9 +64,13 @@ const TrainingHistory = () => {
         <span className="text-xl">Training History</span>
       </FieldLegend>
       <FieldGroup>
+        {/* Years Lifting Field */}
         <Field orientation="horizontal" className="max-w-80">
           <FieldLabel>Years lifting seriously?</FieldLabel>
-          <Select>
+          <Select
+            value={yearsLifting}
+            onValueChange={(e) => onFieldChange("yearsLifting", e)}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select years" />
             </SelectTrigger>
@@ -62,13 +85,24 @@ const TrainingHistory = () => {
           </Select>
         </Field>
 
+        {/* Best Lift Fields */}
         <div className="flex gap-6">
           <Field>
             <FieldLabel>Best Squat</FieldLabel>
             <InputGroup>
-              <InputGroupInput type="number" step="0.1" />
+              <InputGroupInput
+                type="number"
+                step="0.1"
+                value={bestSquat}
+                onChange={(e) => {
+                  onFieldChange("bestSquat", e.target.value);
+                }}
+              />
               <InputGroupAddon align="inline-end">
-                <Select defaultValue="lbs">
+                <Select
+                  value={liftUnit}
+                  onValueChange={(e) => onFieldChange("liftUnit", e)}
+                >
                   <SelectTrigger className="hover:bg-accent w-full border-none dark:bg-transparent">
                     <SelectValue placeholder="lbs/kg" />
                   </SelectTrigger>
@@ -85,9 +119,19 @@ const TrainingHistory = () => {
           <Field>
             <FieldLabel>Best Bench</FieldLabel>
             <InputGroup>
-              <InputGroupInput type="number" step="0.1" />
+              <InputGroupInput
+                type="number"
+                step="0.1"
+                value={bestBench}
+                onChange={(e) => {
+                  onFieldChange("bestBench", e.target.value);
+                }}
+              />
               <InputGroupAddon align="inline-end">
-                <Select defaultValue="lbs">
+                <Select
+                  value={liftUnit}
+                  onValueChange={(e) => onFieldChange("liftUnit", e)}
+                >
                   <SelectTrigger className="hover:bg-accent w-full border-none dark:bg-transparent">
                     <SelectValue placeholder="lbs/kg" />
                   </SelectTrigger>
@@ -104,9 +148,19 @@ const TrainingHistory = () => {
           <Field>
             <FieldLabel>Best Deadlift</FieldLabel>
             <InputGroup>
-              <InputGroupInput type="number" step="0.1" />
+              <InputGroupInput
+                type="number"
+                step="0.1"
+                value={bestDeadlift}
+                onChange={(e) => {
+                  onFieldChange("bestDeadlift", e.target.value);
+                }}
+              />
               <InputGroupAddon align="inline-end">
-                <Select defaultValue="lbs">
+                <Select
+                  value={liftUnit}
+                  onValueChange={(e) => onFieldChange("liftUnit", e)}
+                >
                   <SelectTrigger className="hover:bg-accent w-full border-none dark:bg-transparent">
                     <SelectValue placeholder="lbs/kg" />
                   </SelectTrigger>
@@ -126,8 +180,8 @@ const TrainingHistory = () => {
           <Field>
             <FieldLabel>Previous competitions?</FieldLabel>
             <RadioGroup
-              defaultValue="no"
-              onValueChange={handleRadioChange}
+              onValueChange={(e) => onFieldChange("hasCompeted", e === "yes")}
+              value={hasCompeted ? "yes" : "no"}
               className="flex gap-4 pl-2"
             >
               <div className="flex item-center gap-2">
@@ -140,10 +194,13 @@ const TrainingHistory = () => {
               </div>
             </RadioGroup>
           </Field>
-          {radio && (
+          {/* Add Results Fields */}
+          {hasCompeted && (
             <Button
               type="button"
-              onClick={() => setResults((prev) => [...prev, { result: "" }])}
+              onClick={() =>
+                onFieldChange("results", [...results, { result: "" }])
+              }
             >
               Add Results
             </Button>
@@ -153,14 +210,27 @@ const TrainingHistory = () => {
         {results.map((result, index) => (
           <Field key={index}>
             <InputGroup>
-              <InputGroupInput placeholder="Competition Name | Results" />
+              {/* Result Field */}
+              <InputGroupInput
+                placeholder="Competition Name | Results"
+                value={result.result}
+                onChange={(e) => {
+                  const updated = results.map((r, i) =>
+                    i === index ? { result: e.target.value } : r,
+                  );
+                  onFieldChange("results", updated);
+                }}
+              />
               <InputGroupAddon align="inline-end">
                 <InputGroupButton
                   variant="ghost"
                   className="ml-auto"
                   type="button"
                   onClick={() =>
-                    setResults((prev) => prev.filter((_, i) => i !== index))
+                    onFieldChange(
+                      "results",
+                      results.filter((_, i) => i !== index),
+                    )
                   }
                 >
                   <XIcon />
@@ -169,18 +239,28 @@ const TrainingHistory = () => {
             </InputGroup>
           </Field>
         ))}
-
+        {/* Athletic Background Field */}
         <Field>
           <FieldLabel>Other Athletic Background?</FieldLabel>
-          <Textarea placeholder="Enter your goals here." />
+          <Textarea
+            placeholder="Enter your goals here."
+            value={athleticBackground}
+            onChange={(e) =>
+              onFieldChange("athleticBackground", e.target.value)
+            }
+          />
         </Field>
-
+        {/* Training Schedule */}
         <Field>
           <FieldLabel>Current training schedule</FieldLabel>
           <FieldDescription>
             Days per week and general structure
           </FieldDescription>
-          <Textarea placeholder="Enter why here." />
+          <Textarea
+            placeholder="Enter why here."
+            value={trainingSchedule}
+            onChange={(e) => onFieldChange("trainingSchedule", e.target.value)}
+          />
         </Field>
       </FieldGroup>
     </FieldSet>
