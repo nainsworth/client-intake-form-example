@@ -2,6 +2,7 @@
 
 import sendIntakeEmail from "@/app/actions/email";
 import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -84,6 +85,35 @@ const ClientIntakeForm = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const initialFormData: FormData = {
+    name: "",
+    dob: undefined,
+    height: "",
+    weight: "",
+    weightUnit: "lbs",
+    email: "",
+    phone: "",
+    shortTermGoal: "",
+    longTermGoal: "",
+    competingSoon: false,
+    competitionDate: undefined,
+    whyPowerlifting: "",
+    yearsLifting: "",
+    bestSquat: "",
+    bestBench: "",
+    bestDeadlift: "",
+    liftUnit: "lbs",
+    hasCompeted: false,
+    results: [],
+    athleticBackground: "",
+    trainingSchedule: "",
+  };
+
+  const resetForm = () => {
+    setFormData(initialFormData);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <Card className="w-full sm:max-w-2xl">
       <CardHeader>
@@ -94,8 +124,17 @@ const ClientIntakeForm = () => {
       </CardHeader>
       <CardContent>
         <form
-          onSubmit={() => {
-            startLoading(() => sendIntakeEmail(formData));
+          onSubmit={(e) => {
+            e.preventDefault();
+            startLoading(async () => {
+              const result = await sendIntakeEmail(formData);
+              if (result.success) {
+                toast.success("Form Sent!");
+                resetForm();
+              } else {
+                toast.error("Something went wrong. Please Try Again");
+              }
+            });
           }}
           id="client-intake-form"
         >
@@ -138,7 +177,7 @@ const ClientIntakeForm = () => {
 
       <CardFooter className="pt-6">
         <Field orientation="horizontal">
-          <Button variant="secondary" type="button">
+          <Button variant="secondary" type="button" onClick={resetForm}>
             Reset
           </Button>
           <Button type="submit" form="client-intake-form" disabled={isLoading}>
