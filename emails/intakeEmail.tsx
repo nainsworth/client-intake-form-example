@@ -1,15 +1,15 @@
+import type { FormData } from "@/components/forms/clientIntakeForm";
 import {
   Body,
   Container,
   Head,
   Heading,
+  Hr,
   Html,
   Section,
-  Text,
   Tailwind,
-  Hr,
+  Text,
 } from "@react-email/components";
-import type { FormData } from "@/components/forms/clientIntakeForm";
 
 const IntakeEmail = (formData: FormData) => {
   return (
@@ -100,7 +100,13 @@ const IntakeEmail = (formData: FormData) => {
               {formData.hasCompeted && formData.results.length > 0 && (
                 <Row
                   label="Competition Results"
-                  value={formData.results.map((r) => r.result).join(", ")}
+                  value={
+                    <ul className="pl-8 mt-1 mb-0 leading-8 marker:text-xs">
+                      {formData.results.map((r, i) => (
+                        <li key={i}>{r.result}</li>
+                      ))}
+                    </ul>
+                  }
                 />
               )}
               <Row
@@ -119,13 +125,46 @@ const IntakeEmail = (formData: FormData) => {
   );
 };
 
-const Row = ({ label, value }: { label: string; value: string }) => (
+const Row = ({ label, value }: { label: string; value: React.ReactNode }) => (
   <Section className="mb-3">
     <Text className="text-xs font-semibold text-gray-400 uppercase tracking-wide m-0">
       {label}
     </Text>
-    <Text className="text-gray-800 m-0 mt-1">{value || "—"}</Text>
+    {typeof value === "string" ? (
+      <Text className="text-gray-800 m-0 mt-1">{value || "—"}</Text>
+    ) : (
+      <div className="text-gray-800 mt-1">N/A</div>
+    )}
   </Section>
 );
+
+// IntakeEmail.PreviewProps = {
+//   name: "John Doe",
+//   dob: new Date("1995-06-15"),
+//   height: "72",
+//   weight: "200",
+//   weightUnit: "lbs",
+//   email: "john@example.com",
+//   phone: "(555) 555-5555",
+//   shortTermGoal: "Compete at 198lbs within 6 months",
+//   longTermGoal: "Total 1500lbs raw within 2 years",
+//   competingSoon: true,
+//   competitionDate: new Date("2025-06-01"),
+//   whyPowerlifting: "I love the sport and want to see how far I can go",
+//   yearsLifting: "3-5 years",
+//   bestSquat: "450",
+//   bestBench: "315",
+//   bestDeadlift: "500",
+//   liftUnit: "lbs",
+//   hasCompeted: true,
+//   results: [
+//     { result: "2024 USAPL State Meet — 1st place 198lbs" },
+//     { result: "2024 RPS Regional — 2nd place 198lbs" },
+//     { result: "2023 USAPL Nationals — 5th place 198lbs" },
+//   ],
+//   athleticBackground:
+//     "Football in high school, recreational lifting for 5 years",
+//   trainingSchedule: "4 days a week, conjugate method",
+// } satisfies FormData;
 
 export default IntakeEmail;
