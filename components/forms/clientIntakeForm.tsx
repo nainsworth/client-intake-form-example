@@ -1,7 +1,7 @@
 "use client";
 
 import sendIntakeEmail from "@/app/actions/email";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Field, FieldGroup, FieldSeparator } from "../ui/field";
+import { Spinner } from "../ui/spinner";
 import Goals from "./goals";
 import PersonalInfo from "./personalInfo";
 import TrainingHistory from "./trainingHistory";
@@ -46,6 +47,7 @@ export type FormData = {
 };
 
 const ClientIntakeForm = () => {
+  const [isLoading, startLoading] = useTransition();
   const [formData, setFormData] = useState<FormData>({
     // Personal Info
     name: "",
@@ -93,8 +95,7 @@ const ClientIntakeForm = () => {
       <CardContent>
         <form
           onSubmit={() => {
-            // e.preventDefault();
-            sendIntakeEmail(formData);
+            startLoading(() => sendIntakeEmail(formData));
           }}
           id="client-intake-form"
         >
@@ -140,8 +141,9 @@ const ClientIntakeForm = () => {
           <Button variant="secondary" type="button">
             Reset
           </Button>
-          <Button type="submit" form="client-intake-form">
-            Send Form
+          <Button type="submit" form="client-intake-form" disabled={isLoading}>
+            {isLoading && <Spinner data-icon="inline-start" />}
+            {isLoading ? "Sending..." : "Send Form"}
           </Button>
         </Field>
       </CardFooter>
