@@ -243,7 +243,7 @@ const TrainingHistory = ({
         <Field>
           <FieldLabel>Other Athletic Background?</FieldLabel>
           <Textarea
-            placeholder="Enter your goals here."
+            placeholder="Enter other athletic background."
             value={athleticBackground}
             onChange={(e) =>
               onFieldChange("athleticBackground", e.target.value)
@@ -257,7 +257,7 @@ const TrainingHistory = ({
             Days per week and general structure
           </FieldDescription>
           <Textarea
-            placeholder="Enter why here."
+            placeholder="Enter current training schedule."
             value={trainingSchedule}
             onChange={(e) => onFieldChange("trainingSchedule", e.target.value)}
           />
