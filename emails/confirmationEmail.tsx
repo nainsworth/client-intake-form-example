@@ -1,3 +1,4 @@
+import type { IntakeFormData } from "@/lib/schemas/intakeSchema";
 import {
   Body,
   Column,
@@ -12,9 +13,8 @@ import {
   Tailwind,
   Text,
 } from "@react-email/components";
-import type { FormData } from "@/components/forms/clientIntakeForm";
 
-const confirmationEmail = ({ name }: Pick<FormData, "name">) => {
+const confirmationEmail = ({ name }: Pick<IntakeFormData, "name">) => {
   return (
     <Tailwind>
       <Html>

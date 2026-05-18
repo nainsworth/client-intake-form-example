@@ -1,58 +1,41 @@
 "use client";
 
+import type { IntakeFormData } from "@/lib/schemas/intakeSchema";
 import { CalendarDays, UserIcon } from "lucide-react";
 import { useState } from "react";
+import { Controller, type Control, type FieldErrors } from "react-hook-form";
 import { useMaskInput } from "use-mask-input";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-  FieldLegend,
-  FieldSet,
+    Field,
+    FieldGroup,
+    FieldLabel,
+    FieldLegend,
+    FieldSet,
 } from "../ui/field";
 import { Input } from "../ui/input";
 import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
+    InputGroup,
+    InputGroupAddon,
+    InputGroupInput,
 } from "../ui/input-group";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "../ui/select";
-import type { FormData } from "./clientIntakeForm";
 
 export type PersonalInfoProps = {
-  name: string;
-  dob: Date | undefined;
-  height: string;
-  weight: string;
-  weightUnit: string;
-  email: string;
-  phone: string;
-  onFieldChange: (
-    field: keyof FormData,
-    value: FormData[keyof FormData],
-  ) => void;
+  control: Control<IntakeFormData>;
+  errors: FieldErrors<IntakeFormData>;
 };
 
-const PersonalInfo = ({
-  name,
-  dob,
-  height,
-  weight,
-  weightUnit,
-  email,
-  phone,
-  onFieldChange,
-}: PersonalInfoProps) => {
+const PersonalInfo = ({ control, errors }: PersonalInfoProps) => {
   const [open, setOpen] = useState(false);
 
   const phoneMask = useMaskInput({
@@ -68,126 +51,153 @@ const PersonalInfo = ({
       </FieldLegend>
       <FieldGroup>
         {/* Name Field */}
-        <Field>
+        <Field data-invalid={!!errors.name}>
           <FieldLabel>Name</FieldLabel>
-          <Input
-            type="text"
-            value={name}
-            onChange={(e) => onFieldChange("name", e.target.value)}
+          <Controller
+            control={control}
+            name="name"
+            render={({ field }) => (
+              <Input {...field} type="text" aria-invalid={!!errors.name} />
+            )}
           />
         </Field>
         <div className="gap-6 flex flex-col sm:flex-row">
           {/* DOB Field */}
-          <Field>
+          <Field data-invalid={!!errors.dob}>
             <FieldLabel>Date of Birth</FieldLabel>
-            <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  id="date"
-                  className="justify-between font-normal"
-                >
-                  {dob ? dob.toLocaleDateString() : "Select Date"}
-                  <CalendarDays />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-auto overflow-hidden p-2"
-                align="start"
-              >
-                <Calendar
-                  mode="single"
-                  selected={dob}
-                  defaultMonth={dob}
-                  captionLayout="dropdown"
-                  onSelect={(date) => {
-                    onFieldChange("dob", date);
-                    setOpen(false);
-                  }}
-                />
-              </PopoverContent>
-            </Popover>
+            <Controller
+              control={control}
+              name="dob"
+              render={({ field }) => (
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="justify-between font-normal"
+                      aria-invalid={!!errors.dob}
+                    >
+                      {field.value
+                        ? field.value.toLocaleDateString()
+                        : "Select Date"}
+                      <CalendarDays />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-auto overflow-hidden p-2"
+                    align="start"
+                  >
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      defaultMonth={field.value}
+                      captionLayout="dropdown"
+                      onSelect={(date) => {
+                        field.onChange(date);
+                        setOpen(false);
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
+              )}
+            />
           </Field>
           {/* Height Field */}
-          <Field>
+          <Field data-invalid={!!errors.height}>
             <FieldLabel>Height</FieldLabel>
-            <Select
-              value={height}
-              onValueChange={(e) => {
-                onFieldChange("height", e);
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select Height" />
-              </SelectTrigger>
-              <SelectContent position="popper">
-                <SelectGroup>
-                  <SelectItem value="59">4&apos; 11&quot;</SelectItem>
-                  <SelectItem value="65">5&apos; 5&quot;</SelectItem>
-                  <SelectItem value="68">5&apos; 8&quot;</SelectItem>
-                  <SelectItem value="72">6&apos; 0&quot;</SelectItem>
-                  <SelectItem value="74">6&apos; 2&quot;</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </Field>
-          {/* Weight Field */}
-          <Field>
-            <FieldLabel>Weight</FieldLabel>
-            <InputGroup>
-              <InputGroupInput
-                type="number"
-                step="0.1"
-                value={weight}
-                onChange={(e) => {
-                  onFieldChange("weight", e.target.value);
-                }}
-              />
-              <InputGroupAddon align="inline-end">
-                <Select
-                  value={weightUnit}
-                  onValueChange={(e) => {
-                    onFieldChange("weightUnit", e);
-                  }}
-                >
-                  <SelectTrigger className="hover:bg-accent w-full border-none dark:bg-transparent">
-                    <SelectValue placeholder="lbs/kg" />
+            <Controller
+              control={control}
+              name="height"
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger aria-invalid={!!errors.height}>
+                    <SelectValue placeholder="Select Height" />
                   </SelectTrigger>
                   <SelectContent position="popper">
                     <SelectGroup>
-                      <SelectItem value="lbs">lbs</SelectItem>
-                      <SelectItem value="kg">kg</SelectItem>
+                      <SelectItem value="59">4&apos; 11&quot;</SelectItem>
+                      <SelectItem value="65">5&apos; 5&quot;</SelectItem>
+                      <SelectItem value="68">5&apos; 8&quot;</SelectItem>
+                      <SelectItem value="72">6&apos; 0&quot;</SelectItem>
+                      <SelectItem value="74">6&apos; 2&quot;</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
+              )}
+            />
+          </Field>
+          {/* Weight Field */}
+          <Field data-invalid={!!errors.weight}>
+            <FieldLabel>Weight</FieldLabel>
+            <InputGroup>
+              <Controller
+                control={control}
+                name="weight"
+                render={({ field }) => (
+                  <InputGroupInput
+                    type="number"
+                    step="0.1"
+                    value={field.value}
+                    onChange={field.onChange}
+                    aria-invalid={!!errors.weight}
+                  />
+                )}
+              />
+              <InputGroupAddon align="inline-end">
+                <Controller
+                  control={control}
+                  name="weightUnit"
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="hover:bg-accent w-full border-none dark:bg-transparent">
+                        <SelectValue placeholder="lbs/kg" />
+                      </SelectTrigger>
+                      <SelectContent position="popper">
+                        <SelectGroup>
+                          <SelectItem value="lbs">lbs</SelectItem>
+                          <SelectItem value="kg">kg</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </InputGroupAddon>
             </InputGroup>
           </Field>
         </div>
         <div className="flex flex-col sm:flex-row gap-6">
           {/* Email Field */}
-          <Field>
+          <Field data-invalid={!!errors.email}>
             <FieldLabel>Email</FieldLabel>
-            <Input
-              type="email"
-              placeholder="example@email.com"
-              value={email}
-              onChange={(e) => {
-                onFieldChange("email", e.target.value);
-              }}
+            <Controller
+              control={control}
+              name="email"
+              render={({ field }) => (
+                <Input
+                  type="email"
+                  placeholder="example@email.com"
+                  value={field.value}
+                  onChange={field.onChange}
+                  aria-invalid={!!errors.email}
+                />
+              )}
             />
           </Field>
           {/* Phone Field */}
-          <Field>
+          <Field data-invalid={!!errors.phone}>
             <FieldLabel>Phone</FieldLabel>
-            <Input
-              type="tel"
-              ref={phoneMask}
-              value={phone}
-              onChange={(e) => {
-                onFieldChange("phone", e.target.value);
-              }}
-              placeholder="(000) 000-0000"
+            <Controller
+              control={control}
+              name="phone"
+              render={({ field }) => (
+                <Input
+                  type="tel"
+                  ref={phoneMask}
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="(000) 000-0000"
+                  aria-invalid={!!errors.phone}
+                />
+              )}
             />
           </Field>
         </div>

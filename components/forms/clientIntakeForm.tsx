@@ -1,7 +1,10 @@
 "use client";
 
 import sendIntakeEmail from "@/app/actions/email";
-import { useState, useTransition } from "react";
+import { intakeSchema, type IntakeFormData } from "@/lib/schemas/intakeSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTransition } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import {
@@ -18,101 +21,41 @@ import Goals from "./goals";
 import PersonalInfo from "./personalInfo";
 import TrainingHistory from "./trainingHistory";
 
-export type FormData = {
-  // Personal Info
-  name: string;
-  dob: Date | undefined;
-  height: string;
-  weight: string;
-  weightUnit: string;
-  email: string;
-  phone: string;
-
-  // Goals
-  shortTermGoal: string;
-  longTermGoal: string;
-  competingSoon: boolean;
-  competitionDate: Date | undefined;
-  whyPowerlifting: string;
-
-  // Training History
-  yearsLifting: string;
-  bestSquat: string;
-  bestBench: string;
-  bestDeadlift: string;
-  liftUnit: string;
-  hasCompeted: boolean;
-  results: { result: string }[];
-  athleticBackground: string;
-  trainingSchedule: string;
-};
-
 const ClientIntakeForm = () => {
   const [isLoading, startLoading] = useTransition();
-  const [formData, setFormData] = useState<FormData>({
-    // Personal Info
-    name: "",
-    dob: undefined,
-    height: "",
-    weight: "",
-    weightUnit: "lbs",
-    email: "",
-    phone: "",
 
-    // Goals
-    shortTermGoal: "",
-    longTermGoal: "",
-    competingSoon: false,
-    competitionDate: undefined,
-    whyPowerlifting: "",
+  const {
+    control,
+    handleSubmit,
+    reset,
 
-    // Training History
-    yearsLifting: "",
-    bestSquat: "",
-    bestBench: "",
-    bestDeadlift: "",
-    liftUnit: "lbs",
-    hasCompeted: false,
-    results: [],
-    athleticBackground: "",
-    trainingSchedule: "",
+    formState: { errors, isSubmitted },
+  } = useForm<IntakeFormData>({
+    resolver: zodResolver(intakeSchema),
+    defaultValues: {
+      name: "",
+      dob: undefined,
+      height: "",
+      weight: "",
+      weightUnit: "lbs",
+      email: "",
+      phone: "",
+      shortTermGoal: "",
+      longTermGoal: "",
+      competingSoon: false,
+      competitionDate: undefined,
+      whyPowerlifting: "",
+      yearsLifting: "",
+      bestSquat: "",
+      bestBench: "",
+      bestDeadlift: "",
+      liftUnit: "lbs",
+      hasCompeted: false,
+      results: [],
+      athleticBackground: "",
+      trainingSchedule: "",
+    },
   });
-
-  const handleChange = (
-    field: keyof FormData,
-    value: FormData[keyof FormData],
-  ) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const initialFormData: FormData = {
-    name: "",
-    dob: undefined,
-    height: "",
-    weight: "",
-    weightUnit: "lbs",
-    email: "",
-    phone: "",
-    shortTermGoal: "",
-    longTermGoal: "",
-    competingSoon: false,
-    competitionDate: undefined,
-    whyPowerlifting: "",
-    yearsLifting: "",
-    bestSquat: "",
-    bestBench: "",
-    bestDeadlift: "",
-    liftUnit: "lbs",
-    hasCompeted: false,
-    results: [],
-    athleticBackground: "",
-    trainingSchedule: "",
-  };
-
-  const resetForm = () => {
-    setFormData(initialFormData);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
 
   return (
     <Card className="w-full sm:max-w-2xl">
@@ -124,52 +67,29 @@ const ClientIntakeForm = () => {
       </CardHeader>
       <CardContent>
         <form
-          onSubmit={(e) => {
-            e.preventDefault();
+          id="intake-form"
+          onSubmit={handleSubmit(async (data) => {
             startLoading(async () => {
-              const result = await sendIntakeEmail(formData);
+              const result = await sendIntakeEmail(data);
               if (result.success) {
                 toast.success("Form Sent!");
-                resetForm();
+                reset();
+                window.scrollTo({ top: 0, behavior: "smooth" });
               } else {
                 toast.error("Something went wrong. Please Try Again");
               }
             });
-          }}
-          id="client-intake-form"
+          })}
         >
           <FieldGroup>
-            <PersonalInfo
-              name={formData.name}
-              dob={formData.dob}
-              height={formData.height}
-              weight={formData.weight}
-              weightUnit={formData.weightUnit}
-              email={formData.email}
-              phone={formData.phone}
-              onFieldChange={handleChange}
-            />
+            <PersonalInfo control={control} errors={errors} />
             <FieldSeparator />
-            <Goals
-              shortTermGoal={formData.shortTermGoal}
-              longTermGoal={formData.longTermGoal}
-              competingSoon={formData.competingSoon}
-              competitionDate={formData.competitionDate}
-              whyPowerlifting={formData.whyPowerlifting}
-              onFieldChange={handleChange}
-            />
+            <Goals control={control} errors={errors} />
             <FieldSeparator />
             <TrainingHistory
-              yearsLifting={formData.yearsLifting}
-              bestSquat={formData.bestSquat}
-              bestBench={formData.bestBench}
-              bestDeadlift={formData.bestDeadlift}
-              liftUnit={formData.liftUnit}
-              hasCompeted={formData.hasCompeted}
-              results={formData.results}
-              athleticBackground={formData.athleticBackground}
-              trainingSchedule={formData.trainingSchedule}
-              onFieldChange={handleChange}
+              control={control}
+              errors={errors}
+              isSubmitted={isSubmitted}
             />
           </FieldGroup>
         </form>
@@ -177,10 +97,17 @@ const ClientIntakeForm = () => {
 
       <CardFooter className="pt-6">
         <Field orientation="horizontal">
-          <Button variant="secondary" type="button" onClick={resetForm}>
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={() => {
+              reset();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          >
             Reset
           </Button>
-          <Button type="submit" form="client-intake-form" disabled={isLoading}>
+          <Button type="submit" form="intake-form" disabled={isLoading}>
             {isLoading && <Spinner data-icon="inline-start" />}
             {isLoading ? "Sending..." : "Send Form"}
           </Button>

@@ -1,4 +1,4 @@
-import type { FormData } from "@/components/forms/clientIntakeForm";
+import type { IntakeFormData } from "@/lib/schemas/intakeSchema";
 import {
   Body,
   Container,
@@ -11,7 +11,7 @@ import {
   Text,
 } from "@react-email/components";
 
-const IntakeEmail = (formData: FormData) => {
+const IntakeEmail = (formData: IntakeFormData) => {
   return (
     <Tailwind>
       <Html>
