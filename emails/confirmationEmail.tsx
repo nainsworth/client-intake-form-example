@@ -110,8 +110,8 @@ const confirmationEmail = ({ name }: Pick<IntakeFormData, "name">) => {
   );
 };
 
-confirmationEmail.PreviewProps = {
-  name: "John Doe",
-} satisfies Pick<IntakeFormData, "name">;
+// confirmationEmail.PreviewProps = {
+//   name: "John Doe",
+// } satisfies Pick<IntakeFormData, "name">;
 
 export default confirmationEmail;
