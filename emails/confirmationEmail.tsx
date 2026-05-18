@@ -18,10 +18,15 @@ const confirmationEmail = ({ name }: Pick<IntakeFormData, "name">) => {
   return (
     <Tailwind>
       <Html>
-        <Body className="bg-zinc-800 font-sans">
-          <Container className=" text-gray-100 px-12 py-6">
+        <Body className="bg-gray-200 font-sans">
+          <Container className="px-12 pt-6 pb-10">
             <Section>
-              <Text className="text-center text-5xl font-bold">LOGO</Text>
+              <Img
+                alt="Logo Ipsum Placeholder"
+                src="http://localhost:3000/logoipsum.png"
+                width="140"
+                className="mx-auto"
+              />
             </Section>
           </Container>
           <Container className="bg-white px-12 py-4 rounded-2xl">
@@ -63,10 +68,10 @@ const confirmationEmail = ({ name }: Pick<IntakeFormData, "name">) => {
             <Hr />
             <Section>
               <Text className="mb-0">Excited to get to work!</Text>
-              <Text className="mt-0 italic">&ndash; Signature</Text>
+              <Text className="mt-0 italic">&ndash; Coach Signature</Text>
             </Section>
           </Container>
-          <Container className="text-gray-100 pb-6 pt-2">
+          <Container className="pb-6 pt-2">
             <Section className="text-center">
               <Row>
                 <Column align="center">
@@ -104,5 +109,9 @@ const confirmationEmail = ({ name }: Pick<IntakeFormData, "name">) => {
     </Tailwind>
   );
 };
+
+confirmationEmail.PreviewProps = {
+  name: "John Doe",
+} satisfies Pick<IntakeFormData, "name">;
 
 export default confirmationEmail;
