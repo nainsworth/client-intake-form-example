@@ -40,7 +40,10 @@ const IntakeEmail = (formData: IntakeFormData) => {
                 label="Date of Birth"
                 value={formData.dob ? formData.dob.toLocaleDateString() : "—"}
               />
-              <Row label="Height" value={formData.height} />
+              <Row
+                label="Height"
+                value={`${formData.height} ${formData.heightUnit}`}
+              />
               <Row
                 label="Weight"
                 value={`${formData.weight} ${formData.weightUnit}`}

@@ -8,26 +8,26 @@ import { useMaskInput } from "use-mask-input";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import {
-    Field,
-    FieldGroup,
-    FieldLabel,
-    FieldLegend,
-    FieldSet,
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
 } from "../ui/field";
 import { Input } from "../ui/input";
 import {
-    InputGroup,
-    InputGroupAddon,
-    InputGroupInput,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
 } from "../ui/input-group";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "../ui/select";
 
 export type PersonalInfoProps = {
@@ -105,26 +105,40 @@ const PersonalInfo = ({ control, errors }: PersonalInfoProps) => {
           {/* Height Field */}
           <Field data-invalid={!!errors.height}>
             <FieldLabel>Height</FieldLabel>
-            <Controller
-              control={control}
-              name="height"
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger aria-invalid={!!errors.height}>
-                    <SelectValue placeholder="Select Height" />
-                  </SelectTrigger>
-                  <SelectContent position="popper">
-                    <SelectGroup>
-                      <SelectItem value="59">4&apos; 11&quot;</SelectItem>
-                      <SelectItem value="65">5&apos; 5&quot;</SelectItem>
-                      <SelectItem value="68">5&apos; 8&quot;</SelectItem>
-                      <SelectItem value="72">6&apos; 0&quot;</SelectItem>
-                      <SelectItem value="74">6&apos; 2&quot;</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              )}
-            />
+            <InputGroup>
+              <Controller
+                control={control}
+                name="height"
+                render={({ field }) => (
+                  <InputGroupInput
+                    type="number"
+                    step="0.1"
+                    value={field.value}
+                    onChange={field.onChange}
+                    aria-invalid={!!errors.height}
+                  />
+                )}
+              />
+              <InputGroupAddon align="inline-end">
+                <Controller
+                  control={control}
+                  name="heightUnit"
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="hover:bg-accent w-full border-none dark:bg-transparent">
+                        <SelectValue placeholder="in/cm" />
+                      </SelectTrigger>
+                      <SelectContent position="popper">
+                        <SelectGroup>
+                          <SelectItem value="in">in</SelectItem>
+                          <SelectItem value="cm">cm</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </InputGroupAddon>
+            </InputGroup>
           </Field>
           {/* Weight Field */}
           <Field data-invalid={!!errors.weight}>

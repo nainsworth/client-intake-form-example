@@ -5,6 +5,7 @@ export const intakeSchema = z
     name: z.string().min(1, "Name is required"),
     dob: z.date("Date is required"),
     height: z.string().min(1, "Height is required"),
+    heightUnit: z.string(),
     weight: z.string().min(1, "Weight is required"),
     weightUnit: z.string(),
     email: z.email("Email is required"),
