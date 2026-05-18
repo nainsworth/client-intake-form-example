@@ -90,6 +90,7 @@ const PersonalInfo = ({ control, errors }: PersonalInfoProps) => {
                       mode="single"
                       selected={field.value}
                       defaultMonth={field.value}
+                      disabled={(date) => date > new Date()}
                       captionLayout="dropdown"
                       onSelect={(date) => {
                         field.onChange(date);
