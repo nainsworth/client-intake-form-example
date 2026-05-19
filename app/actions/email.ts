@@ -11,14 +11,14 @@ const sendIntakeEmail = async (formData: IntakeFormData) => {
   try {
     await Promise.all([
       resend.emails.send({
-        from: "Test <onboarding@resend.dev>",
-        to: ["nja8161995@gmail.com"],
+        from: "Coach <onboarding@resend.dev>",
+        to: ["nja8161995@gmail.com", formData.email],
         subject: "New Client Intake Form",
         react: IntakeEmail(formData),
       }),
       resend.emails.send({
-        from: "Test <onboarding@resend.dev>",
-        to: [formData.email],
+        from: "Coach <onboarding@resend.dev>",
+        to: ["nja8161995@gmail.com", formData.email],
         subject: "We got your form!",
         react: confirmationEmail({ name: formData.name }),
       }),

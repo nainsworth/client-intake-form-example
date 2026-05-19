@@ -23,7 +23,7 @@ const confirmationEmail = ({ name }: Pick<IntakeFormData, "name">) => {
             <Section>
               <Img
                 alt="Logo Ipsum Placeholder"
-                src="http://localhost:3000/logoipsum.png"
+                src="https://client-intake-form-example.vercel.app/logoipsum.png"
                 width="140"
                 className="mx-auto"
               />
@@ -81,7 +81,7 @@ const confirmationEmail = ({ name }: Pick<IntakeFormData, "name">) => {
                         <Img
                           alt="Facebook"
                           height="22"
-                          src="http://localhost:3000/facebook.png"
+                          src="https://client-intake-form-example.vercel.app/facebook.png"
                           width="22"
                         />
                       </Link>
@@ -91,7 +91,7 @@ const confirmationEmail = ({ name }: Pick<IntakeFormData, "name">) => {
                         <Img
                           alt="Instagram"
                           height="22"
-                          src="http://localhost:3000/instagram.png"
+                          src="https://client-intake-form-example.vercel.app/instagram.png"
                           width="22"
                         />
                       </Link>
