@@ -1,13 +1,13 @@
 "use server";
 
-import type { FormData } from "@/components/forms/clientIntakeForm";
 import confirmationEmail from "@/emails/confirmationEmail";
 import IntakeEmail from "@/emails/intakeEmail";
+import type { IntakeFormData } from "@/lib/schemas/intakeSchema";
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const sendIntakeEmail = async (formData: FormData) => {
+const sendIntakeEmail = async (formData: IntakeFormData) => {
   try {
     await Promise.all([
       resend.emails.send({
