@@ -1,15 +1,23 @@
 import type { IntakeFormData } from "@/lib/schemas/intakeSchema";
 import {
-  Body,
-  Container,
-  Head,
-  Heading,
-  Hr,
-  Html,
-  Section,
-  Tailwind,
-  Text,
+    Body,
+    Container,
+    Head,
+    Heading,
+    Hr,
+    Html,
+    Section,
+    Tailwind,
+    Text,
 } from "@react-email/components";
+
+const calculateAge = (dob: Date) => {
+  const today = new Date();
+  let age = today.getFullYear() - dob.getFullYear();
+  const m = today.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+  return age;
+};
 
 const IntakeEmail = (formData: IntakeFormData) => {
   return (
@@ -38,7 +46,7 @@ const IntakeEmail = (formData: IntakeFormData) => {
               <Row label="Name" value={formData.name} />
               <Row
                 label="Date of Birth"
-                value={formData.dob ? formData.dob.toLocaleDateString() : "—"}
+                value={`${formData.dob.toLocaleDateString()} (${calculateAge(formData.dob)} years old)`}
               />
               <Row
                 label="Height"
@@ -62,18 +70,13 @@ const IntakeEmail = (formData: IntakeFormData) => {
               <Row label="Long-Term Goal" value={formData.longTermGoal} />
               <Row
                 label="Competing Soon"
-                value={formData.competingSoon ? "Yes" : "No"}
+                value={
+                  formData.competingSoon
+                    ? `Yes — ${formData.competitionDate?.toLocaleDateString()}`
+                    : "No"
+                }
               />
-              {formData.competingSoon && (
-                <Row
-                  label="Competition Date"
-                  value={
-                    formData.competitionDate
-                      ? formData.competitionDate.toLocaleDateString()
-                      : "—"
-                  }
-                />
-              )}
+
               <Row label="Why Powerlifting" value={formData.whyPowerlifting} />
             </Section>
 
@@ -85,33 +88,36 @@ const IntakeEmail = (formData: IntakeFormData) => {
               <Hr className="border-gray-200 mb-6" />
               <Row label="Years Lifting" value={formData.yearsLifting} />
               <Row
-                label="Best Squat"
-                value={`${formData.bestSquat} ${formData.liftUnit}`}
+                label="Best Lifts"
+                value={
+                  <ul className="pl-8 mt-1 mb-0 leading-8 marker:text-xs">
+                    <li>
+                      Squat: {formData.bestSquat} {formData.liftUnit}
+                    </li>
+                    <li>
+                      Bench: {formData.bestBench} {formData.liftUnit}
+                    </li>
+                    <li>
+                      Deadlift: {formData.bestDeadlift} {formData.liftUnit}
+                    </li>
+                  </ul>
+                }
               />
-              <Row
-                label="Best Bench"
-                value={`${formData.bestBench} ${formData.liftUnit}`}
-              />
-              <Row
-                label="Best Deadlift"
-                value={`${formData.bestDeadlift} ${formData.liftUnit}`}
-              />
+
               <Row
                 label="Previous Competitions"
-                value={formData.hasCompeted ? "Yes" : "No"}
-              />
-              {formData.hasCompeted && formData.results.length > 0 && (
-                <Row
-                  label="Competition Results"
-                  value={
+                value={
+                  formData.hasCompeted ? (
                     <ul className="pl-8 mt-1 mb-0 leading-8 marker:text-xs">
                       {formData.results.map((r, i) => (
                         <li key={i}>{r.result}</li>
                       ))}
                     </ul>
-                  }
-                />
-              )}
+                  ) : (
+                    "None"
+                  )
+                }
+              />
               <Row
                 label="Athletic Background"
                 value={formData.athleticBackground}
@@ -130,14 +136,12 @@ const IntakeEmail = (formData: IntakeFormData) => {
 
 const Row = ({ label, value }: { label: string; value: React.ReactNode }) => (
   <Section className="mb-3">
-    <Text className="text-xs font-semibold text-gray-400 uppercase tracking-wide m-0">
+    <Text className="text-sm font-semibold text-gray-400 uppercase tracking-wide m-0">
       {label}
     </Text>
-    {typeof value === "string" ? (
-      <Text className="text-gray-800 m-0 mt-1">{value || "—"}</Text>
-    ) : (
-      <div className="text-gray-800 mt-1">N/A</div>
-    )}
+    <div className="text-gray-800 mt-1 whitespace-pre-wrap text-sm">
+      {value || "—"}
+    </div>
   </Section>
 );
 
@@ -145,6 +149,7 @@ const Row = ({ label, value }: { label: string; value: React.ReactNode }) => (
 //   name: "John Doe",
 //   dob: new Date("1995-06-15"),
 //   height: "72",
+//   heightUnit: "in",
 //   weight: "200",
 //   weightUnit: "lbs",
 //   email: "john@example.com",
@@ -168,6 +173,6 @@ const Row = ({ label, value }: { label: string; value: React.ReactNode }) => (
 //   athleticBackground:
 //     "Football in high school, recreational lifting for 5 years",
 //   trainingSchedule: "4 days a week, conjugate method",
-// } satisfies FormData;
+// } satisfies IntakeFormData;
 
 export default IntakeEmail;
